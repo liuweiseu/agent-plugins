@@ -10,8 +10,8 @@ Arguments passed to this skill (empty if none): `$ARGUMENTS`
 
 - the **sub-module name**: everything except the last word. It is the blue name text in the
   top-left corner of a region of the schematic (the regions `sch_organize` draws);
-- the **core layer**, the last word: `top` / `顶层` / `F.Cu` / `front` → F.Cu,
-  `bottom` / `底层` / `B.Cu` / `back` → B.Cu.
+- the **core layer**, the last word: `top` / `front` / `F.Cu` (or the Chinese word for top layer) → F.Cu,
+  `bottom` / `back` / `B.Cu` (or the Chinese word for bottom layer) → B.Cu.
 
 Ask for whatever is missing. Only parts of this sub-module are moved; every other footprint, and
 any footprint locked in KiCad, stays where it is. No tracks are routed.
@@ -25,64 +25,79 @@ was not met.
 All board work goes through the Konnect MCP tools. Load the toolsets first: `load_toolset` with
 `["pcb_components", "placement", "pcb_board", "verification", "pcb_export"]`.
 
-## PCB 元件布局优先级
+## PCB placement priorities
 
-PCB 元件布局必须遵循以下基本原则：
+PCB component placement must follow this basic principle:
 
-**电气性能正确性、信号完整性、电源完整性和可制造性，始终优先于视觉美观。**
+**Electrical correctness, signal integrity, power integrity and manufacturability always take precedence
+over visual appearance.**
 
-元件排列整齐、方向一致、丝印不重叠等视觉优化要求，不得以牺牲电气性能为代价。
+Visual goals such as neat rows, consistent orientation and non-overlapping silkscreen must never be
+achieved at the cost of electrical performance.
 
-### 1. 去耦电容布局（Decoupling Capacitors）
+### 1. Decoupling capacitors
 
-- 在布局之前，必须识别每颗去耦电容所属的电源网络，以及对应的目标 IC。
-- 对于关键的高频去耦电容，布局应以尽可能降低电源/地回路的寄生电感为主要目标。
-- 必须考虑实际电源焊盘、接地焊盘、过孔、电源平面连接以及 BGA 扇出布线约束。
-- 不允许仅根据电容封装中心与 IC 封装中心之间的距离，判断去耦电容布局的优劣。
-- 对于已经验证过的去耦电容布局，除非有明确的工程理由，否则应保留原有位置。
-- 不允许仅仅为了元件排列整齐、方向统一或改善丝印效果，而将去耦电容移动到电气性能较差的位置。
-- 对于共享相同电源网络的多个 IC，不应仅根据网络名称决定去耦电容的归属，需要结合原理图功能分组和物理布局进行分析。
+- Before placement, identify the power net and the target IC of every decoupling capacitor.
+- For critical high-frequency decoupling capacitors, the primary goal is to minimise the parasitic
+  inductance of the power/ground loop.
+- Take the actual power pads, ground pads, vias, power-plane connections and BGA fanout routing
+  constraints into account.
+- Never judge a decoupling capacitor's placement only by the distance between the capacitor's centre and
+  the IC's centre.
+- Keep decoupling placements that have already been verified, unless there is a clear engineering reason
+  to change them.
+- Never move a decoupling capacitor to an electrically worse position just to make rows neater,
+  orientations uniform or the silkscreen better.
+- When several ICs share the same power net, do not assign decoupling capacitors by net name alone;
+  analyse the schematic's functional grouping and the physical layout.
 
-### 2. 一般元件布局（General Placement）
+### 2. General placement
 
-- 优先布局对电气性能敏感的关键元件。
-- 按照功能模块对元件进行分组，例如 FPGA、DDR、时钟、电源、通信接口和高速数据接口。
-- 在布局过程中，优先考虑信号路径、电源连接和实际布线可实现性。
-- 在满足电气约束的前提下，再优化元件方向、排列整齐度和视觉对称性。
-- 对于 FPGA、DDR、高速收发器相关器件、时钟芯片等关键器件，不得仅为了视觉美观而改变已经验证的布局。
+- Place the electrically sensitive critical parts first.
+- Group parts by functional block, e.g. FPGA, DDR, clocks, power, communication interfaces and high-speed
+  data interfaces.
+- During placement, give priority to signal paths, power connections and actual routability.
+- Only once the electrical constraints are met, optimise orientation, alignment and visual symmetry.
+- Never change a verified placement of critical parts such as FPGAs, DDR, high-speed transceiver parts and
+  clock chips just for looks.
 
-### 3. 丝印处理（Silkscreen）
+### 3. Silkscreen
 
-- 优先通过独立移动或旋转元件位号（Reference Designator），解决丝印重叠问题。
-- 不允许仅仅为了避免丝印重叠而随意移动已经合理布局的元件。
-- 丝印不得覆盖裸露焊盘或影响焊接与制造。
-- 在适当情况下，可以将部分元件标识保留在制造层（Fabrication Layer），而不要求全部显示在丝印层。
-- 对于高密度 FPGA PCB，应允许部分丝印位号采用统一、简化的布局方式，而不是强行要求每个元件周围都有完整丝印。
-- 丝印优化必须在关键元件的电气布局完成之后进行。
+- Resolve silkscreen overlaps first by moving or rotating the reference designators independently.
+- Never move well-placed parts just to avoid silkscreen overlaps.
+- Silkscreen must not cover exposed pads or affect soldering and manufacturing.
+- Where appropriate, some designators may be kept on the fabrication layer only, instead of showing all of
+  them on the silkscreen.
+- On dense FPGA boards, allow a uniform, simplified designator scheme for some parts instead of forcing a
+  complete silkscreen label around every part.
+- Silkscreen optimisation comes only after the electrical placement of the critical parts is finished.
 
-### 4. 布局验证（Placement Verification）
+### 4. Placement verification
 
-- 每次完成一批元件布局修改之后，都应运行 KiCad DRC。
-- 检查是否出现新的器件间距、焊盘间距、板边距离及其他设计规则违规。
-- 检查关键器件位置是否发生未经授权的变化。
-- 对于去耦电容，应检查其电源网络、目标 IC、位置以及潜在的电源/地回路问题。
-- 对无法自动验证的电气性能问题，应明确标记为需要人工审核。
-- 不得将通过 DRC 等同于通过信号完整性或电源完整性验证。
+- Run KiCad DRC after every batch of placement changes.
+- Check for new part spacing, pad spacing, board-edge clearance and other design-rule violations.
+- Check that no critical part has moved without authorisation.
+- For decoupling capacitors, check the power net, target IC, position and possible power/ground loop
+  problems.
+- Mark electrical issues that cannot be verified automatically as needing manual review.
+- Never treat a passing DRC as passing signal-integrity or power-integrity verification.
 
-### 5. 布局执行原则
+### 5. Execution order
 
-按照以下顺序执行布局优化：
+Optimise the placement in this order:
 
-1. 满足电气性能和可制造性约束。
-2. 优化关键去耦电容与电源/地连接。
-3. 保证关键器件之间合理的相对位置。
-4. 保证布线可实现性，避免阻塞高速信号。
-5. 优化普通元件的排列、间距和方向。
-6. 最后优化丝印位置和整体视觉效果。
+1. Meet the electrical and manufacturability constraints.
+2. Optimise the critical decoupling capacitors and their power/ground connections.
+3. Ensure sensible relative positions between critical parts.
+4. Ensure routability; do not block high-speed signals.
+5. Optimise the arrangement, spacing and orientation of ordinary parts.
+6. Finally, optimise silkscreen positions and the overall appearance.
 
-**重要规则：低优先级的视觉优化，不得破坏高优先级的电气布局约束。**
+**Key rule: lower-priority visual optimisation must never break higher-priority electrical placement
+constraints.**
 
-如果无法同时满足所有要求，必须优先保证电气性能，并在结果报告中明确说明未满足的视觉优化目标。
+If not all requirements can be met at once, electrical performance comes first, and the report must state
+clearly which visual goals were not met.
 
 ## 1. Find the sub-module and its parts
 
@@ -111,14 +126,14 @@ Read each part's pads and nets with `get_component_pads`.
   high-frequency decoupling capacitors. They are placed first.
 - **Power pins**: core pads on a power rail (a net carried by power symbols or named like a
   supply, e.g. `+3V3`, `VDD_*`, `VCCIO`), not ground.
-- **Decoupling capacitors** (去耦电容): one pad on a rail that feeds a core power pin, the other on
+- **Decoupling capacitors**: one pad on a rail that feeds a core power pin, the other on
   ground, nothing in between, usually small values (≤ 1 µF: 100 nF, 10 nF, 1 µF). Their target
   IC is the chip of this sub-module (the schematic region), not just any IC on the same net: when
   several ICs share the rail, decide from the schematic grouping and the physical layout, and ask
   if it stays unclear. Pair each with a power pin of its rail: one per pin where possible, the
   smallest value at the pin that needs it most (highest frequency); when there are more
   capacitors than pins, spread them over the pins of that rail.
-- **Filter capacitors** (滤波电容): every other capacitor: bulk capacitors on a rail (typically
+- **Filter capacitors**: every other capacitor: bulk capacitors on a rail (typically
   ≥ 4.7 µF), regulator input/output capacitors, capacitors in RC/LC/π filters and behind ferrite
   beads, on signal lines, crystal load, feedback/compensation, bootstrap capacitors.
 - **Other parts**: resistors, inductors, ferrite beads, diodes/LEDs, transistors, crystals,
@@ -137,7 +152,7 @@ and **wait for the user's confirmation** before moving anything.
 
 ## 3. Place
 
-Work in the order of the execution priorities (section 5 above); a later step never moves a part
+Work in the execution order (section 5 of the priorities above); a later step never moves a part
 placed by an earlier one to an electrically worse position. All positions in board millimetres on
 a 0.1 mm (or 0.05 mm for fine-pitch) grid; rotations in multiples of 90° unless the core is
 rotated otherwise.

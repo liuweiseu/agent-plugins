@@ -62,7 +62,7 @@ plugins chosen for the directory it is opened in.
 One-time setup (the only time the full path is needed):
 
 ```bash
-/home/agent/Projects/agent-plugins/tools/plugin-install.sh --setup
+/home/agent/Projects/tools/agent-plugins/tools/plugin-install.sh --setup
 ```
 
 This checks the MCP executables, registers the marketplace and links `plugin-install.sh` into
@@ -107,7 +107,7 @@ For example, `local` writes:
 ```json
 {
   "enabledPlugins": { "pcb-design@agent-plugins": true, "konnect@agent-plugins": true },
-  "permissions": { "allow": ["Read(//home/agent/Projects/agent-plugins/**)"] }
+  "permissions": { "allow": ["Read(//home/agent/Projects/tools/agent-plugins/**)"] }
 }
 ```
 
@@ -126,9 +126,9 @@ Setup (once, or with `--setup`):
 1. **Checks the MCP executables**: MCP servers built in this repository (`mcp/<name>/pyproject.toml`) are installed
    with `uv tool install --reinstall`; external ones such as `konnect` are only checked and a warning is printed
    when they are not on PATH.
-2. **Registers the marketplace**: `claude plugin marketplace add /home/agent/Projects/agent-plugins`.
+2. **Registers the marketplace**: `claude plugin marketplace add /home/agent/Projects/tools/agent-plugins`.
    A marketplace is only a catalog; registering it does not enable any plugin in any project.
-3. **Links the script**: `~/.local/bin/plugin-install.sh -> /home/agent/Projects/agent-plugins/tools/plugin-install.sh`.
+3. **Links the script**: `~/.local/bin/plugin-install.sh -> /home/agent/Projects/tools/agent-plugins/tools/plugin-install.sh`.
 
 Every run with plugin names (about one second):
 
@@ -145,7 +145,7 @@ Scopes work per **directory**. To try a plugin without installing anything, load
 affects only that session and writes no configuration):
 
 ```bash
-R=/home/agent/Projects/agent-plugins
+R=/home/agent/Projects/tools/agent-plugins
 claude --plugin-dir $R/plugins/pcb-design --plugin-dir $R/mcp/konnect/plugin
 ```
 

@@ -60,7 +60,7 @@ Plugin 不做全局安装，而是**按项目目录启用**：在哪个目录打
 一次性准备（只有这一次需要写完整路径）：
 
 ```bash
-/home/agent/Projects/agent-plugins/tools/plugin-install.sh --setup
+/home/agent/Projects/tools/agent-plugins/tools/plugin-install.sh --setup
 ```
 
 它会检查 MCP 可执行文件、注册 marketplace，并把 `plugin-install.sh` 链接到 `~/.local/bin`，之后在任何目录都能直接运行。
@@ -104,7 +104,7 @@ tools/validate.sh                                    # 校验仓库
 ```json
 {
   "enabledPlugins": { "pcb-design@agent-plugins": true, "konnect@agent-plugins": true },
-  "permissions": { "allow": ["Read(//home/agent/Projects/agent-plugins/**)"] }
+  "permissions": { "allow": ["Read(//home/agent/Projects/tools/agent-plugins/**)"] }
 }
 ```
 
@@ -119,9 +119,9 @@ tools/validate.sh                                    # 校验仓库
 
 1. **检查 MCP 可执行文件**：本仓库自己实现的 MCP（`mcp/<name>/pyproject.toml`）用 `uv tool install --reinstall` 安装；
    `konnect` 这类外部 MCP 只做检查，不在 PATH 上时给出警告。
-2. **注册 marketplace**：`claude plugin marketplace add /home/agent/Projects/agent-plugins`。
+2. **注册 marketplace**：`claude plugin marketplace add /home/agent/Projects/tools/agent-plugins`。
    marketplace 只是一个目录，注册它不会在任何项目中启用 plugin。
-3. **链接脚本**：`~/.local/bin/plugin-install.sh -> /home/agent/Projects/agent-plugins/tools/plugin-install.sh`。
+3. **链接脚本**：`~/.local/bin/plugin-install.sh -> /home/agent/Projects/tools/agent-plugins/tools/plugin-install.sh`。
 
 每次带 plugin 名运行（约一秒）：
 
@@ -137,7 +137,7 @@ tools/validate.sh                                    # 校验仓库
 scope 按**目录**生效。想不安装就试用某个 plugin，可以在启动时加载（只影响这个会话，不写任何配置）：
 
 ```bash
-R=/home/agent/Projects/agent-plugins
+R=/home/agent/Projects/tools/agent-plugins
 claude --plugin-dir $R/plugins/pcb-design --plugin-dir $R/mcp/konnect/plugin
 ```
 

@@ -67,7 +67,7 @@ and nets that reach three or more anchors (shared buses, global reset, ...).
 6. Mechanical parts form one "mechanical" module.
 
 Every part except followers ends up in exactly one module. Name each module by its function and
-key references, e.g. `3V3 LDO (U3)`, `USB-C 接口 (J1, U5)`, `状态 LED (D1-D3)`, in the language
+key references, e.g. `3V3 LDO (U3)`, `USB-C interface (J1, U5)`, `Status LEDs (D1-D3)`, in the language
 of the sheet's existing text (ask if unclear).
 
 Show the user the partition as a table per sheet (module name, anchor, all parts), with the
