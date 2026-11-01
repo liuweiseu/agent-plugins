@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "name": "round-sensor",
+  "units": "mm",
+  "origin": [100, 160],
+  "outline": { "shape": "circle", "diameter": 60 },
+  "mounting_holes": [
+    { "pattern": "polar", "count": 3, "inset": 5, "drill": 3.2, "start_angle": 90 }
+  ],
+  "stackup": { "copper_layers": 2, "thickness": 1.0 },
+  "edge_clearance": 0.3
+}

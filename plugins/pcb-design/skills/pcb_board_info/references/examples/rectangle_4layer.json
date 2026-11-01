@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "name": "adapter-board",
+  "units": "mm",
+  "outline": { "shape": "rectangle", "width": 100, "height": 80 },
+  "mounting_holes": [
+    { "pattern": "corners", "inset": 4, "drill": 3.2 },
+    { "at": [50, 74], "drill": 2.7, "plated": true }
+  ],
+  "stackup": { "copper_layers": 4, "thickness": 1.6, "finish": "ENIG" },
+  "edge_clearance": 0.5
+}

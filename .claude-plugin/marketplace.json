@@ -1,0 +1,22 @@
+{
+  "name": "agent-plugins",
+  "owner": {
+    "name": "Wei Liu",
+    "email": "liuwei_berkeley@berkeley.edu"
+  },
+  "description": "Domain plugins (PCB design) and the shared MCP capabilities they use",
+  "plugins": [
+    {
+      "name": "konnect",
+      "source": "./mcp/konnect/plugin",
+      "description": "Registers the external Konnect MCP server (KiCad schematic/PCB design tools) with Claude Code",
+      "category": "infrastructure"
+    },
+    {
+      "name": "pcb-design",
+      "source": "./plugins/pcb-design",
+      "description": "KiCad schematic, PCB layout and manufacturing export workflows through the Konnect MCP",
+      "category": "domain"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "pcb-design",
+  "version": "0.1.0",
+  "description": "PCB design: KiCad schematic capture, PCB layout, routing, design review and manufacturing export through the shared Konnect MCP",
+  "author": {
+    "name": "Wei Liu",
+    "email": "liuwei_berkeley@berkeley.edu"
+  },
+  "license": "MIT",
+  "keywords": ["pcb", "kicad", "schematic", "layout", "hardware"],
+  "dependencies": ["konnect"]
+}

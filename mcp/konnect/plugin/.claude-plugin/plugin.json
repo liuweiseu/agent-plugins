@@ -1,0 +1,12 @@
+{
+  "name": "konnect",
+  "version": "0.1.0",
+  "description": "Shared MCP capability: KiCad schematic/PCB design tools via Konnect. Konnect is an external KiCad plugin; its `konnect` executable must be on PATH.",
+  "author": {
+    "name": "Wei Liu",
+    "email": "liuwei_berkeley@berkeley.edu"
+  },
+  "homepage": "https://github.com/mixelpixx/Konnect",
+  "license": "MIT",
+  "keywords": ["mcp", "konnect", "kicad", "pcb", "infrastructure"]
+}
